@@ -1,31 +1,29 @@
 #!/usr/bin/env python3
-"""0. Regex-ing -> obfuscate log messages
-"""
+"""Log user data"""
 import re
-import logging
-from typing import List
 import os
+import logging
 import mysql.connector
+from typing import List
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
-def log_user_data(user_data):
-    """Log user data"""
-    filtered_keys = ['name', 'email', 'phone', 'ssn', 'password']
-    log_format = '[HOLBERTON] user_date INFO {last_login}: {data}'
+def print_data(user_info):
+    """print user data"""
+    print_values = ['name', 'email', 'phone', 'ssn', 'password']
+    data = '[HOLBERTON] user_date INFO {last_login}: {data}'
 
-    data = '; '.join(f'{key}=***' if key in filtered_keys else f'{key}={value}'
+    data = '; '.join(f'{key}=***' if key in print_values else f'{key}={value}'
                      for key, value in zip(['name', 'email', 'phone', 'ssn',
                                             'password', 'ip', 'last_login',
-                                            'user_agent'], user_data))
-    print(log_format.format(last_login=user_data[6], data=data))
+                                            'user_agent'], user_info))
+    print(data.format(last_login=user_info[6], data=data))
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
-    """Returns connector to db"""
-
+    """Connect to a MySQL database"""
     return mysql.connector.connect(
         user=os.environ.get("PERSONAL_DATA_DB_USERNAME", "root"),
         password=os.environ.get("PERSONAL_DATA_DB_PASSWORD", ""),
@@ -35,17 +33,17 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
 
 
 def get_logger() -> logging.Logger:
-    """Get logger"""
-    logger = logging.getLogger("user_data")
-    logger.setLevel(logging.INFO)
-    logger.propagate = False
+    """Get logger object"""
+    objct = logging.getLogger("user_data")
+    objct.setLevel(logging.INFO)
+    objct.propagate = False
 
-    stream_handler = logging.StreamHandler()
+    temp = logging.StreamHandler()
     formatter = RedactingFormatter(PII_FIELDS)
-    stream_handler.setFormatter(formatter)
-    logger.addHandler(stream_handler)
+    temp.setFormatter(formatter)
+    objct.addHandler(temp)
 
-    return logger
+    return objct
 
 
 def filter_datum(fields: List[str], redaction: str,
@@ -92,7 +90,7 @@ def main():
                     last_login, user_agent FROM users;")
 
     for row in cursor:
-        log_user_data(row)
+        print_data(row)
     cursor.close()
     db.close()
 
