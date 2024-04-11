@@ -48,10 +48,10 @@ def get_logger() -> logging.Logger:
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
-    """Obfuscate log messages"""
-    for field in fields:
-        message = re.sub(f"{field}=.*?{separator}",
-                         f"{field}={redaction}{separator}", message)
+    """Returns the log message obfuscated"""
+    for prop in fields:
+        message = re.sub(f"{prop}=.*?{separator}",
+                         f"{prop}={redaction}{separator}", message)
     return message
 
 
@@ -68,29 +68,29 @@ class RedactingFormatter(logging.Formatter):
         super(RedactingFormatter, self).__init__(self.FORMAT)
 
     def format(self, record: logging.LogRecord) -> str:
-        """formats the log record"""
+        """Format record"""
         Formatter = logging.Formatter(self.FORMAT)
         record = Formatter.format(record)
         return filter_datum(self.fields, self.REDACTION,
                             str(record), self.SEPARATOR)
 
     def redact(self, message: str) -> str:
-        """Redact message"""
-        for field in self.fields:
-            message = re.sub(f"{field}=[^;]",
-                             f"{field}={self.REDACTION}", message)
+        """method to obfuscate the message"""
+        for prop in self.fields:
+            message = re.sub(f"{prop}=[^;]",
+                             f"{prop}={self.REDACTION}", message)
         return message
 
 
 def main():
-    """Main function"""
+    """main call function"""
     db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT name, email, phone, ssn, password, ip, \
                     last_login, user_agent FROM users;")
 
-    for row in cursor:
-        print_data(row)
+    for record in cursor:
+        print_data(record)
     cursor.close()
     db.close()
 
