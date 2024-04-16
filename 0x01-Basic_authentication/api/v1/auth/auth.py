@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
-""" Module of Auth views
-"""
-from flask import request
+"""doc doc doc """
 from typing import List, TypeVar
-
-User = TypeVar('User')
+from flask import request
 
 
 class Auth:
+    """doc doc doc"""
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        ''' Method that returns False, path and excluded_paths will be used later
-        '''
-        return False
+        """doc doc doc"""
+        if path is None or excluded_paths is None or len(excluded_paths) == 0:
+            return True
+        if path[-1] != "/":
+            path += "/"
+
+        return path not in excluded_paths
 
     def authorization_header(self, request=None) -> str:
-        ''' Method that returns None, request will be the Flask request object
-        '''
-        return None
+        """doc doc doc"""
+        if request is None:
+            return None
+        return request.headers.get("Authorization", None)
 
-    def current_user(self, request=None) -> User:
-        ''' Method that returns None, request will be the Flask request object
-        '''
+    def current_user(self, request=None) -> TypeVar("User"):
+        """doc doc doc"""
         return None
