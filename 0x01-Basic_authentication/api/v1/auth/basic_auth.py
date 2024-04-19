@@ -11,7 +11,7 @@ class BasicAuth(Auth):
             self, authorization_header: str) -> str:
         """Method that returns the Base64 part of the Basic Authorization header"""
         if authorization_header is None or \
-                not isinstance(authorization_header, str) or \
+                type(authorization_header) != str or \
                 not authorization_header.startswith('Basic '):
             return None
         return authorization_header[6:]
