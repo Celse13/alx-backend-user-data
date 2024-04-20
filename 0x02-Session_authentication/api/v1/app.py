@@ -36,10 +36,10 @@ def before_request_func():
             '/api/v1/status/',
             '/api/v1/unauthorized/',
             '/api/v1/forbidden/',
-            '/api/v1/auth_session/login/']):  # Add '/api/v1/auth_session/login/' to the list
+            '/api/v1/auth_session/login/']):
         return
     if auth.authorization_header(request) is None and auth.session_cookie(
-            request) is None:  # Check both authorization_header and session_cookie
+            request) is None:
         abort(401)
     current_user = auth.current_user(request)
     if current_user is None:
