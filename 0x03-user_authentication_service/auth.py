@@ -7,11 +7,17 @@ from user import User
 from typing import ByteString
 from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import NoResultFound
+from uuid import uuid4
 
 
 def _hash_password(password: str) -> bytes:
     """Hash a password"""
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+
+
+def _generate_uuid() -> str:
+    """Generate a UUID"""
+    return str(uuid4())
 
 
 class Auth:
