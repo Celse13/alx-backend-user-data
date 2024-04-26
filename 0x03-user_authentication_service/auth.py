@@ -76,12 +76,11 @@ class Auth:
             raise ValueError("User doesn't exist")
 
     def update_password(self, reset_token: str, password: str) -> None:
-        """checks the reset token with the database then
-        sets the new password"""
+        """Update a user's password"""
         try:
             user = self._db.find_user_by(reset_token=reset_token)
-            NPwd = _hash_password(password)
-            self._db.update_user(user.id, hashed_password=NPwd,
+            hashed_password = _hash_password(password)
+            self._db.update_user(user.id, hashed_password=hashed_password,
                                  reset_token=None)
         except NoResultFound:
             raise ValueError
